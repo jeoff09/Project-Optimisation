@@ -23,7 +23,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:hint="@string/login_text" />
+        android:hint="@string/login_text"
+        android:textColor="#D50000" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -38,7 +39,8 @@
         android:textColorHint="#D50000"
         android:layout_alignRight="@+id/textEditLogin"
         android:layout_alignEnd="@+id/textEditLogin"
-        android:hint="@string/mdp_text"/>
+        android:hint="@string/mdp_text"
+        android:textColor="#D50000" />
 
     <Button
         android:layout_width="wrap_content"

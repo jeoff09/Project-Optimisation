@@ -12,6 +12,8 @@ import com.iia.mg.filesecurestorage.LoginActivity;
  */
 public class AppConstants extends LoginActivity {
     final String pathImage = android.os.Environment.DIRECTORY_DCIM;
+    public  static final String ID_CONNECTION = "identifiant";
+    public static final String PWD_CONNEXION = "password";
     public static final String URL_SRV = "";
     public static final String[] REPOSITORY_PATH = {"pathImage"};
 
