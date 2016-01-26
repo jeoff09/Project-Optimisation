@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.iia.mg.filesecurestorage.findFile.GetFiles;
 
 import com.iia.mg.filesecurestorage.config.AppConstants;
 
@@ -17,6 +18,7 @@ public class LoginActivity extends AppCompatActivity {
     public String identifiant = "";
     public String pwd = "";
     public JSONObject fluxConn;
+    public GetFiles getfiles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,29 +37,18 @@ public class LoginActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                TextView tvide = (TextView)findViewById(R.id.textEditLogin);
-                identifiant = tvide.getText().toString();
+
+                TextView tvid = (TextView)findViewById(R.id.textEditLogin);
+                identifiant = tvid.getText().toString();
 
                 TextView tvpwd = (TextView)findViewById(R.id.textEditPwd);
                 pwd = tvpwd.getText().toString();
 
-                fluxConn = writeJSON(identifiant,pwd);
+                fluxConn = getfiles.chiffrementIdAes128(identifiant, pwd);
+
             }
         });
 
-    }
-    public JSONObject writeJSON(String id, String pwd) {
-        AppConstants constants = new AppConstants();
-        JSONObject object = new JSONObject();
-
-        try {
-            object.put(constants.ID_CONNECTION, id);
-            object.put(constants.PWD_CONNEXION , pwd);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return object;
     }
 
 }
