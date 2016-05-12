@@ -1,5 +1,7 @@
 package com.iia.mg.filesecurestorage;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.Settings;
@@ -14,6 +16,7 @@ import com.iia.mg.filesecurestorage.Connection.RecoversIds;
 import com.iia.mg.filesecurestorage.findFile.GetFiles;
 
 import com.iia.mg.filesecurestorage.config.AppConstants;
+import com.iia.mg.filesecurestorage.findFile.SynchroActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
     public String ident;
     public String pwd ;
     public JSONObject fluxConn;
+    String url = "http://192.168.100.78/Web/Controller/index.php?inputStream=";
+    public String isSucess;
 
 
     @Override
@@ -51,8 +56,21 @@ public class LoginActivity extends AppCompatActivity {
                 TextView tvpwd = (TextView)findViewById(R.id.textEditPwd);
                 pwd = tvpwd.getText().toString();
 
-                fluxConn = recoverIds.chiffrementIdAes128(ident, pwd);
+                System.out.println( "id = "+ ident + "pwd : "+ pwd );
+
+                fluxConn = recoverIds.chiffrementIdAes128(ident, pwd,"false");
                 System.out.println("flux = " + fluxConn.toString());
+                isSucess = recoverIds.PostJsonToServer(fluxConn,url);
+                if(isSucess == "true")
+                {
+                    Intent intent = new Intent(LoginActivity.this, SynchroActivity.class);
+                    startActivity(intent);
+                }
+                else {
+
+                }
+                System.out.println(fluxConn);
+
 
             }
         });
