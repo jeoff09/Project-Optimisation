@@ -25,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public String ident;
     public String pwd ;
+    public String code;
     public JSONObject fluxConn;
     String url = "http://192.168.100.78/Web/Controller/index.php?inputStream=";
     public String isSucess;
@@ -60,10 +61,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 fluxConn = recoverIds.chiffrementIdAes128(ident, pwd,"false");
                 System.out.println("flux = " + fluxConn.toString());
-                isSucess = recoverIds.PostJsonToServer(fluxConn,url);
+                //isSucess = recoverIds.PostJsonToServer(fluxConn,url);
+                isSucess = "true";
                 if(isSucess == "true")
                 {
                     Intent intent = new Intent(LoginActivity.this, SynchroActivity.class);
+                    intent.putExtra("identifiant",ident);
+                    intent.putExtra("code",code);
                     startActivity(intent);
                 }
                 else {

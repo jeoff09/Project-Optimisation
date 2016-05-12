@@ -12,15 +12,24 @@ import android.widget.Button;
 import com.iia.mg.filesecurestorage.R;
 import com.iia.mg.filesecurestorage.findFile.GetFiles;
 
+import org.json.JSONObject;
+
 public class SynchroActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final String identifiant;
+        final String code ;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_synchro);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Button uploadButton = (Button)findViewById(R.id.buttonSynchro);
+        Bundle extras = getIntent().getExtras();
+
+        identifiant = extras.getString("identifiant");
+        code = extras.getString("code");
+
 
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,8 +42,9 @@ public class SynchroActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 final GetFiles getFiles = new GetFiles();
-                                getFiles.StartManualUpload();
+                               JSONObject flux =  getFiles.StartManualUpload(identifiant, code);
                                 dialog.hide();
+                                System.out.println("flux = " + flux);
                             }
                         });
                     }
