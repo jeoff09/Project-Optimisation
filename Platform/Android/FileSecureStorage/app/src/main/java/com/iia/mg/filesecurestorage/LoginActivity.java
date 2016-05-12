@@ -1,6 +1,8 @@
 package com.iia.mg.filesecurestorage;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -71,7 +73,16 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 else {
-
+                    AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                    alertDialog.setTitle("Erreur");
+                    alertDialog.setMessage("Impossible d'effectuer la connexion !");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
                 }
                 System.out.println(fluxConn);
 

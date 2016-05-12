@@ -1,6 +1,8 @@
 package com.iia.mg.filesecurestorage.findFile;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
+import com.iia.mg.filesecurestorage.Connection.RecoversIds;
 import com.iia.mg.filesecurestorage.R;
 import com.iia.mg.filesecurestorage.findFile.GetFiles;
 
@@ -16,10 +19,16 @@ import org.json.JSONObject;
 
 public class SynchroActivity extends AppCompatActivity {
 
+     String identifiant;
+     String code ;
+     String result;
+    final String url = "";
+    final GetFiles getFiles = new GetFiles();
+    final RecoversIds recoversIds = new RecoversIds();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final String identifiant;
-        final String code ;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_synchro);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -41,10 +50,24 @@ public class SynchroActivity extends AppCompatActivity {
                     public void run() {
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                final GetFiles getFiles = new GetFiles();
-                               JSONObject flux =  getFiles.StartManualUpload(identifiant, code);
+
+                                JSONObject flux =  getFiles.StartManualUpload(identifiant, code);
+                                result =  recoversIds.PostJsonToServer(flux,url);
                                 dialog.hide();
                                 System.out.println("flux = " + flux);
+                                if (result == "null") {
+                                    AlertDialog alertDialog = new AlertDialog.Builder(SynchroActivity.this).create();
+                                    alertDialog.setTitle("Erreur");
+                                    alertDialog.setMessage("Impossible d'effectuer la synchronisation !");
+                                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                    alertDialog.show();
+
+                                }
                             }
                         });
                     }
