@@ -14,36 +14,43 @@
 		fclose($handle);
 	}
 
-	function connection ($id, $mdp) {
+	function connection ($decryptedTabIdMdp) {
 		//On verifie si le dossier existe
-		if (file_exists("/" + $id)) {
+		if ($decryptedTabIdMdp['first_connection'] == FALSE) {
+			if (file_exists("/" + $decryptedTabIdMdp['identifiant'])) {
 
-			//Si oui on ouvre le dossier et on recupere le mot de passe.
-			$handle = fopen("/" + $id + "/Confg", "w+");
-			$mdp2 = fgets ( $handle);
+				//Si oui on ouvre le dossier et on recupere le mot de passe.
+				$handle = fopen("/" + $decryptedTabIdMdp['identifiant'] + "/Confg", "w+");
+				$mdp2 = fgets ( $handle);
 
-			//On verifie le mot de passe
-			if (strcmp ($mdp2, $mdp)) {
-				// Si la comparraison est ok on renvoie vrai
-				$ok = TRUE;
-			}
-			else {
-				// Si la comparraison n'est pas correcte on renvoie faux
-				$ok = FALSE;
-			}
+				//On verifie le mot de passe
+				if (strcmp ($mdp2, $decryptedTabIdMdp['password'])) {
+					// Si la comparraison est ok on renvoie vrai
+					$ok = echo(TRUE);
+				}
+				else {
+					// Si la comparraison n'est pas correcte on renvoie faux
+					$Anwser = 'Mot de passe inccorect';
+					$ok = echo(FALSE, $Anwser);
+				}
 
-			return $ok
+				return $ok;
 
-		} else {
+			} else {
 
-			// Si le dossier n'existe pas on renvoie faux
-			$ok = FALSE;
+				// Si le dossier n'existe pas on renvoie faux
+				$Anwser = 'Compte non trouvé';
+				$ok = echo(FALSE, $Anwser);
 
-    		return $ok;
+	    		return $ok;
+	   		}
+   		}else{
+   			firstConnection($decryptedTabIdMdp['identifiant'], $decryptedTabIdMdp['password']);
    		}
 	}
 
 	function deconnection ($link) {
+		return $ok = echo(FALSE);
 	}
 
 ?>

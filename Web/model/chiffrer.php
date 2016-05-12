@@ -1,7 +1,7 @@
 <?php
 
 //Je déchiffre le mot de passe.
-function dechiffrementMdp ($encrypted)
+public function dechiffrementMdp (Request $_REQUEST)
 {
 
 /* Charge un chiffrement */
@@ -18,7 +18,7 @@ $key = substr(md5('very secret key'), 0, $ks);
 mcrypt_generic_init($td, $key, $iv);
 
 /* Déchiffre les données */
-$decryptedMdp = mdecrypt_generic($td, $encrypted);
+$decryptedMdp = mdecrypt_generic($td, $_GET['inputStream']);
 
 /* Libère le gestionnaire de déchiffrement, et ferme le module */
 mcrypt_generic_deinit($td);
@@ -28,13 +28,13 @@ return $decryptedMdp;
 }
 
 //Je rechiffre le mot de passe mais en rijndael-256.
-function chiffrementMdp($decryptedMdp)
+public function chiffrementMdp($decryptedMdp)
 {
 
 //$secret = serialize(arrayNom($nom))
 
 /* Charge un chiffrement */
-$td = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+$td = mcrypt_module_open('rijndael-192', '', 'ofb', '');
 
 /* Crée le VI et détermine la taille de la clé */
 $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_DEV_RANDOM);
@@ -56,13 +56,13 @@ return $mdpEncrypted;
 }
 
 //Je chiffre la liste des documents dont le serveur à besoin.
-function chiffrementListe($mdpEncrypted, arrayNom($nom))
+public function chiffrementListe($mdpEncrypted, arrayNom($nom))
 {
 
 $secret = serialize(arrayNom($nom))
 
 /* Charge un chiffrement */
-$td = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+$td = mcrypt_module_open('rijndael-192', '', 'ofb', '');
 
 /* Crée le VI et détermine la taille de la clé */
 $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_DEV_RANDOM);
@@ -84,11 +84,11 @@ return $encrypted;
 }
 
 //Je déchiffre la liste des documentus ou les documents que j'ai demandé.
-function dechiffrement ($encrypted, $mdpEncrypted)
+public function dechiffrement ($encrypted, $mdpEncrypted)
 {
 
 /* Charge un chiffrement */
-$td = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+$td = mcrypt_module_open('rijndael-192', '', 'ofb', '');
 
 /* Crée le VI et détermine la taille de la clé */
 $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_DEV_RANDOM);
