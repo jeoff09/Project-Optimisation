@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -34,14 +36,19 @@ public class RecoversIds {
     AppConstants constants = new AppConstants();
     byte[] ivBytes =new byte[16];
 
-    //prépare le contenu du flux json avec intitulé et valeur
-    public JSONObject chiffreIdToJson(String id, String pwd,String Iv,String FirstConnection) {
+    /**
+     * Transforme information to Json
+     * @param id
+     * @param pwd
+     * @param Iv
+     * @return
+     */
+    public JSONObject chiffreIdToJson(String id, String pwd,String Iv) {
 
         try {
             object.put(AppConstants.ID_CONNECTION, id);
             object.put(AppConstants.PWD_CONNEXION, pwd);
             object.put(AppConstants.IV_CONNECTION,Iv);
-            object.put(AppConstants.FIRST_CONNECTION,FirstConnection);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -50,12 +57,15 @@ public class RecoversIds {
         return object;
     }
 
-    /* appelle la méthode de chiffrement et converti le tableau de byte reçu en string
-        Ensuite inclu ses strings dans le fichiers JSon et le renvoi
-    */
-    public JSONObject chiffrementIdAes128(String id, String pwd, String first_Connection) {
-        byte[] TableId; byte[] TablePWD; byte[] TableIV; byte[] TableFirst_Co;
-        String chiffIDBase64; String chiffPWDBase64; String ivBase64; String first_connBase64;
+    /**
+     *
+     * @param id
+     * @param pwd
+     * @return Json
+     */
+    public JSONObject chiffrementIdAes128(String id, String pwd) {
+        byte[] TableId; byte[] TablePWD; byte[] TableIV;
+        String chiffIDBase64; String chiffPWDBase64; String ivBase64;
 
         //chiffre id to chiffrId et transforme en string
         TableId = encryptAES256(id);
@@ -65,15 +75,12 @@ public class RecoversIds {
         TablePWD = encryptAES256(pwd);
         chiffPWDBase64 = Base64.encodeToString(TablePWD, Base64.URL_SAFE);
 
-        // transforme le tableau dIv en string
+        // Make ivBytes to String
         ivBase64 =Base64.encodeToString(ivBytes,Base64.URL_SAFE);
 
-        // transforme le boolean first connection en string
-        TableFirst_Co = encryptAES256(first_Connection);
-        first_connBase64 = Base64.encodeToString(TableFirst_Co,Base64.URL_SAFE);
 
         //make chiffre id to json
-        objectChiff = chiffreIdToJson(chiffIDBase64, chiffPWDBase64,ivBase64,first_connBase64);
+        objectChiff = chiffreIdToJson(chiffIDBase64, chiffPWDBase64,ivBase64);
 
         return objectChiff;
     }
@@ -98,7 +105,11 @@ public class RecoversIds {
         return  cipherText;
     }
 
-    // Récupère la clé secrète
+    /**
+     * Get the Secret Key
+     * @param secretKey
+     * @return
+     */
     public SecretKeySpec getKey(String secretKey) {
 
         byte[] byteKey = secretKey.getBytes();
@@ -107,7 +118,11 @@ public class RecoversIds {
 
     }
 
-    //déchiffre le tableau de byte
+    /**
+     *
+     * @param toDechiffr
+     * @return string
+     */
     public  String dechiffrToString(byte[] toDechiffr)
     {
         String dechiffr = null;
@@ -131,6 +146,12 @@ public class RecoversIds {
         return  dechiffr;
     }
 
+    /**
+     * Function to post Json with Http request
+     * @param jsonObject
+     * @param url
+     * @return String answerPost
+     */
     public String PostJsonToServer(JSONObject jsonObject,String url)
     {
         InputStream inputStream;
@@ -161,6 +182,12 @@ public class RecoversIds {
         return result;
     }
 
+    /**
+     * Convert the InputStream to String
+     * @param inputStream
+     * @return string
+     * @throws IOException
+     */
     public static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
         String line = "";
@@ -171,5 +198,33 @@ public class RecoversIds {
         inputStream.close();
         return result;
 
+    }
+
+    /**
+     * Get the answer and cast the value of authentified or not and the Code
+     * @param answer
+     * @return ArrayList
+     */
+    public ArrayList<String> AnswerToConnect(String answer)
+    {
+        ArrayList<String> Connectanswer = new ArrayList<String>();
+        if(answer != null) {
+            String test = "vrai\\aiz7ux9ChawYL652qL3vhg==";
+
+
+            int position = test.indexOf((int) '\\'); // trouve la position du '\' dans la chaine
+            String t1 = test.substring(0, position);  // extrait la chaine a gauche
+            String t2 = test.substring(position + 1, test.length()); // extrait la chaine a droite
+
+            Connectanswer.add(0, t1);
+            Connectanswer.add(1, t2);
+
+            System.out.println("Authentifier = " +Connectanswer.get(0) + "Code = "+ Connectanswer.get(1));
+        }
+        else {
+            Connectanswer.add(0,"faux");
+            Connectanswer.add(1, "00000");
+        }
+        return Connectanswer;
     }
 }

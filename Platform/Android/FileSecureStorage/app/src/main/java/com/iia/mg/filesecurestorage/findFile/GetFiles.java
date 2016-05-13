@@ -55,8 +55,9 @@ public class GetFiles {
     AppConstants constants = new AppConstants();
     RecoversIds recover = new RecoversIds();
     byte[] ivBytes =new byte[16];
+
     /**
-     * Démarrage de la synchronisation
+     * Starting Sync
      */
     public JSONObject StartManualUpload(String id,String code) {
         JSONObject jsonobject = new JSONObject();
@@ -66,15 +67,25 @@ public class GetFiles {
         System.out.println("photoDir : " + sdCardDirectory);
         List<File> files = getListFiles(dirFileObj);
         for (File file : files) {
-
-            System.out.println(file.getName());
-            FileText fileText = fileToFileText(file);
-            filesText.add(fileText);
+            System.out.println( "Boucle For : " + file.getName());
+            String name = file.getName();
+            if(name.equals("optionsfile.txt") == true || name.equals("profilesfile.txt"))
+            {
+                FileText fileText = fileToFileText(file);
+                filesText.add(fileText);
+            }
+            else {
+                System.out.println( "Boucle if _ else ");
+            }
         }
 
         if(filesText.size() != 0)
         {
+            System.out.println("Creation Json");
             jsonobject = FilesTextTojson(filesText,id,code);
+        }
+        else {
+            System.out.println( "filesText.size : " + filesText.size());
         }
 
         return jsonobject;
@@ -140,6 +151,11 @@ public class GetFiles {
         return content;
     }
 
+    /**
+     * Transforme le file en un FileText avec le contenu Chiffré
+     * @param file
+     * @return fileText
+     */
     private FileText fileToFileText(File file)
     {
         String content = ContentFileToString(file);
@@ -147,7 +163,9 @@ public class GetFiles {
         String path = file.getPath();
         Date updated_at = new Date();
         long longDate = file.lastModified();
+        System.out.println( "longDate " + longDate);
         String stringDate = Long.toString(longDate);
+        System.out.println( "StringDate " + stringDate);
         try{
             updated_at = simpleDateFormat.parse(stringDate);
         }
@@ -155,7 +173,7 @@ public class GetFiles {
         {
             System.out.println("Exception " + e);
         }
-
+        System.out.println( "Date " + updated_at);
         FileText fileText = chiffrementFileAes128(content, name, path, updated_at);
 
         return fileText;
@@ -185,11 +203,13 @@ public class GetFiles {
         chiffNameBase64 = Base64.encodeToString(TableName, Base64.URL_SAFE);
 
         //chiffre path
-        TablePath = encryptAES128(content);
+        TablePath = encryptAES128(path);
         chiffPathBase64 = Base64.encodeToString(TablePath, Base64.URL_SAFE);
 
         //chiffre updated_at
-        TableUpdated_at = encryptAES128(content);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String myDate =  sdf.format(updated_at);
+        TableUpdated_at = encryptAES128(myDate);
         chiffUpdated_atBase64 = Base64.encodeToString(TableUpdated_at, Base64.URL_SAFE);
 
 
@@ -220,22 +240,6 @@ public class GetFiles {
         return  cipherText;
     }
 
-
-    public byte[] encodeFile(byte[] key, byte[] fileData) throws Exception
-    {
-
-        SecretKeySpec secret = recover.getKey(constants.KeyChiffrementAes128);
-        Cipher cipher = Cipher.getInstance("AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
-        cipher.init(Cipher.ENCRYPT_MODE, secret, ivSpec);
-
-        byte[] encrypted = cipher.doFinal(fileData);
-
-        return encrypted;
-    }
-
-
-
     /**
      *
      * @param filesText
@@ -246,19 +250,20 @@ public class GetFiles {
     public JSONObject FilesTextTojson (ArrayList<FileText> filesText,String identifiant,String code)
     {
         String ivBase64;
-        // transforme le tableau dIv en string
+        String identifiantBase64;
+        String codeBase64;
+        byte[] TableId;
+        byte [] TableCode;
+
+        //Encrypt id
+        TableId = encryptAES128(identifiant);
+        identifiantBase64 = Base64.encodeToString(TableId, Base64.URL_SAFE);
+
+        // Table Iv to String
         ivBase64 =Base64.encodeToString(ivBytes,Base64.URL_SAFE);
 
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        try{
-            jsonObject.put("identifiant",identifiant);
-            jsonObject.put("code",code);
-            jsonObject.put("IV",ivBase64);
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         for(FileText file : filesText)
         {
@@ -281,12 +286,23 @@ public class GetFiles {
         }catch (JSONException e) {
         e.printStackTrace();
     }
+        try{
+            jsonObject.put("identifiant",identifiantBase64);
+            jsonObject.put("code",code);
+            jsonObject.put("IV",ivBase64);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
         return jsonObject;
     }
 
 
-
-    // Récupère la clé secrète
+    /**
+     * Get the Secret Key
+     * @param secretKey
+     * @return SecretKey
+     */
     public SecretKeySpec getKey(String secretKey) {
 
         byte[] byteKey = secretKey.getBytes();

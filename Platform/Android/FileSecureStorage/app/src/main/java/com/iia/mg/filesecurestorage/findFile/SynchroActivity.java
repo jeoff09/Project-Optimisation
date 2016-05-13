@@ -39,7 +39,7 @@ public class SynchroActivity extends AppCompatActivity {
         identifiant = extras.getString("identifiant");
         code = extras.getString("code");
 
-
+        //Start Sync on click if send return null success show Dialog success else show error dial
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
                 public void onClick(View v) {
@@ -53,8 +53,8 @@ public class SynchroActivity extends AppCompatActivity {
 
                                 JSONObject flux =  getFiles.StartManualUpload(identifiant, code);
                                 result =  recoversIds.PostJsonToServer(flux,url);
+                                System.out.println("flux fichier = " + flux);
                                 dialog.hide();
-                                System.out.println("flux = " + flux);
                                 if (result == "null") {
                                     AlertDialog alertDialog = new AlertDialog.Builder(SynchroActivity.this).create();
                                     alertDialog.setTitle("Erreur");
@@ -67,6 +67,18 @@ public class SynchroActivity extends AppCompatActivity {
                                             });
                                     alertDialog.show();
 
+                                }
+                                else {
+                                    AlertDialog alertDialog = new AlertDialog.Builder(SynchroActivity.this).create();
+                                    alertDialog.setTitle("Succès");
+                                    alertDialog.setMessage("La synchronisation à été effectuée avec succès !");
+                                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                    alertDialog.show();
                                 }
                             }
                         });

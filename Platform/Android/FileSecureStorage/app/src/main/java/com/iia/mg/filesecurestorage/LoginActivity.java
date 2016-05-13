@@ -23,14 +23,17 @@ import com.iia.mg.filesecurestorage.findFile.SynchroActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity {
 
     public String ident;
     public String pwd ;
-    public String code;
+    public ArrayList<String> authentfication;
+    public String code = "152839";
     public JSONObject fluxConn;
     String url = "http://192.168.100.78/Web/Controller/index.php?inputStream=";
-    public String isSucess;
+    public String isSucess = "ddd";
 
 
     @Override
@@ -38,9 +41,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
          final RecoversIds recoverIds = new RecoversIds();
-
-        String androidId = Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ANDROID_ID);
 
         Button synchro = (Button)findViewById(R.id.buttonSynchroFiles);
 
@@ -61,15 +61,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 System.out.println( "id = "+ ident + "pwd : "+ pwd );
 
-                fluxConn = recoverIds.chiffrementIdAes128(ident, pwd,"false");
+                fluxConn = recoverIds.chiffrementIdAes128(ident, pwd);
                 System.out.println("flux = " + fluxConn.toString());
-                //isSucess = recoverIds.PostJsonToServer(fluxConn,url);
-                isSucess = "true";
-                if(isSucess == "true")
+                isSucess = recoverIds.PostJsonToServer(fluxConn,url);
+                authentfication = recoverIds.AnswerToConnect(isSucess);
+                isSucess = authentfication.get(0);
+                if(isSucess.equals("vrai") == true)
                 {
                     Intent intent = new Intent(LoginActivity.this, SynchroActivity.class);
                     intent.putExtra("identifiant",ident);
-                    intent.putExtra("code",code);
+                    intent.putExtra("code",authentfication.get(1));
                     startActivity(intent);
                 }
                 else {
