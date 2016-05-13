@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">FileSecureStorage</string>
+    <string name="button_connection">Connexion</string>
+    <string name="synchron_file">Synchroniser vos fichiers</string>
+    <string name="confirm_synchro">Voulez-vous vraiment synchroniser vos fichiers ?</string>
+    <string name="login_text">Identifiant</string>
+    <string name="mdp_text">Mot de passe</string>
+    <string name="title_activity_synchro">Synchronisation des fichiers</string>
+</resources>
