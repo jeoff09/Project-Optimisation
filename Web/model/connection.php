@@ -41,7 +41,7 @@
 			$mdp2 = dechiffrementdata($mdp2, $decryptedTabIdMdp->IV);
 			fclose($handle);
 			//On verifie le mot de passe
-			if (strcmp($mdp2,$decryptedTabIdMdp->password)) {
+			if (($mdp2 == $decryptedTabIdMdp->password) == true) {
 				// Si la comparraison est ok on renvoie vrai
 				unlink("C:\\wamp64\\www\\Web\\".$decryptedTabIdMdp->identifiant."\\Confg.txt");
 				$code = firstConnection($decryptedTabIdMdp->identifiant, $decryptedTabIdMdp->password, $decryptedTabIdMdp->IV);

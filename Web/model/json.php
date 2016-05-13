@@ -11,10 +11,9 @@ function Decode_json ($encrypted)
 //Je déchiffre le mot de passe.
 function Encode_json ($encrypted)
 {
-	$chain = json_encode(value)($encrypted);
+	$chain = json_encode($encrypted);
 
 	return $chain;
-}
 }
 
 ?>
