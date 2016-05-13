@@ -5,8 +5,10 @@ include '../model/connection.php';
 include '../model/data.php';
 include '../model/json.php';
 
-$decryptedTabIdMdp = dechiffrementMdp($_REQUEST);
+$decryptedTabIdMdp = dechiffrement();
 
-connection($decryptedTabIdMdp);
+$ok = connection($decryptedTabIdMdp);
+
+echo $ok;
 
 ?>
